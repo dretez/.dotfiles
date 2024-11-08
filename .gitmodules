@@ -1,3 +1,6 @@
 [submodule "nvim/nvim-config"]
-	path = nvim/nvim-config
+	path = .config/nvim/nvim-config
 	url = https://github.com/dretez/nvim-config.git
+[submodule ".config/bashrc"]
+	path = .config/bashrc
+	url = https://github.com/dretez/bashrc.git
