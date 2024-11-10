@@ -12,7 +12,7 @@ mv tmp/.git/ . &&
 rm -rf tmp/ &&
 git restore --staged . &&
 git restore . &&
-git submodule update --init --recursive
+git submodule update --init --recursive --remote
 ```
 
 ## Maintaining
