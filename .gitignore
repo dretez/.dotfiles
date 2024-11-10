@@ -1,0 +1,11 @@
+# ignore every file
+*
+
+# don't ignore the following files and directories
+!.git/
+!.gitignore
+!.gitmodules
+!.tmux.conf
+!.bashrc
+!.config/
+!README.MD
