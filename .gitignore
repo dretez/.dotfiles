@@ -8,4 +8,5 @@
 !.tmux.conf
 !.bashrc
 !.config/
+!.local/scripts
 !README.MD
