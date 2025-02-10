@@ -1,0 +1,31 @@
+#!/bin/bash
+
+cur_dir_name=$(basename $(pwd))
+
+if tmux has-session -t=$cur_dir_name 2> /dev/null; then
+    echo "There's already a tmux session running on this project"
+    exit 1
+fi
+
+# The first winddow will be used for version control
+tmux new-session -ds $cur_dir_name -n git 'git status && ${SHELL}'
+
+# The second window will be used for code writing
+tmux new-window -t $cur_dir_name -n nvim 'nvim . && ${SHELL}'
+
+# The resources for the actual website should be located in a subdirectory
+# inside the root project directory. I usually name this directory 'public'
+# The next windows created will use this directory as a root
+cd public
+
+# The third window will run live-server. It's useful to not run it as a
+# background process, as live-server has useful ouput
+tmux new-window -t $cur_dir_name -dn live-server 'live-server'
+
+
+# Finally attach to the new session
+if [[ -z $TMUX ]]; then
+    tmux attach -t $cur_dir_name
+else
+    tmux switch-client -t $cur_dir_name
+fi
