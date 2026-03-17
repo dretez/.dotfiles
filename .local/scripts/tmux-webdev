@@ -1,4 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Check for dependencies
+miss_deps=0
+if [[ -z $(which tmux) ]]; then
+    echo "Missing dependency: tmux"
+    ((miss_deps+=1))
+fi
+if [[ -z $(which git) ]]; then
+    echo "Missing dependency: git"
+    ((miss_deps+=1))
+fi
+if [[ -z $(which nvim) ]]; then
+    echo "Missing dependency: neovim"
+    ((miss_deps+=1))
+fi
+if [[ -z $(which sass) ]]; then
+    echo "Missing dependency: sass"
+    ((miss_deps+=1))
+fi
+if [[ -z $(which live-server) ]]; then
+    echo "Missing dependency: live-server"
+    ((miss_deps+=1))
+fi
+if [[ miss_deps -gt 0 ]]; then
+    exit 1
+fi
+
 
 cur_dir_name=$(basename $(pwd))
 
@@ -7,20 +34,23 @@ if tmux has-session -t=$cur_dir_name 2> /dev/null; then
     exit 1
 fi
 
-# The first winddow will be used for version control
+# The first window will be used for version control
 tmux new-session -ds $cur_dir_name -n git 'git status && ${SHELL}'
 
 # The second window will be used for code writing
 tmux new-window -t $cur_dir_name -n nvim 'nvim . && ${SHELL}'
 
+# The third window will handle all node instances
+#
+# The first pane will handle sass compilation
+tmux new-window -t $cur_dir_name -dn node 'sass -w sass/:public/styles/'
 # The resources for the actual website should be located in a subdirectory
 # inside the root project directory. I usually name this directory 'public'
 # The next windows created will use this directory as a root
 cd public
-
-# The third window will run live-server. It's useful to not run it as a
+# The second pane will run live-server. It's important to not run it as a
 # background process, as live-server has useful ouput
-tmux new-window -t $cur_dir_name -dn live-server 'live-server'
+tmux split-window -h -t $cur_dir_name:node 'live-server --entry-file=/index.html'
 
 
 # Finally attach to the new session
